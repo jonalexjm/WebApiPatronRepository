@@ -24,8 +24,7 @@ namespace Northwind.Api.Integration.Test
         public async Task Verify_GetAllCustomers_200ResponseCode_With_Data()
         {
         //Given
-            _context.AddRange(A.ListOf<Customer>(2));
-            _context.SaveChanges();
+            new CustomerBuilder(_context).With10Customers();
         //When
             var result = await _system.GetAsJson<IList<Customer>>("/api/customer");
         //Then
