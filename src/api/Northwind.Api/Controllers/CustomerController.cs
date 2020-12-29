@@ -5,6 +5,7 @@ using Northwind.Api.Repository;
 using System.Collections.Generic;
 using Northwind.Api.Models;
 
+
 namespace Northwind.Api.Controllers
 {
     [ApiController]
@@ -22,7 +23,6 @@ namespace Northwind.Api.Controllers
         public ActionResult<IEnumerable<Customer>> GetAllCustomer()
         {
             return Ok(_repository.ReadAll());
-        }
-        
+        }        
     }
 }
