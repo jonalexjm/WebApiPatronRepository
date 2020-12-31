@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System;
 using Northwind.Api.Repository.Mysql;
 using Northwind.Api.Models;
+using GenFu;
 
 namespace Northwind.Api.Integration.Test
 {
@@ -12,37 +13,56 @@ namespace Northwind.Api.Integration.Test
         public CustomerBuilder(NorthwindDbContext context)
         {
             _context = context;
+            CleanCustomerTable(); 
         } 
 
+         public CustomerBuilder WithSpecificCustomer(Customer customer)
+        {            
+            AddCustomer(customer);
+            return this;
+        }
+        public CustomerBuilder WithOneCustomerAndIdValue(int id)
+        {
+            A.Configure<Customer>()
+                .Fill(c=> c.Id, ()=> {return id;});
+            
+            AddCustomer(A.New<Customer>());
+            return this;
+        }
         public CustomerBuilder With10Customers()
         {
-            AdCustomersToDbContext(CreateCustomer(10));
-
+            AddCustomersToDbContext(CreateCustomer(10));
             return this;
         }
 
         public NorthwindDbContext Build()
         {
             return _context;
-
         }
-
-        public void AdCustomersToDbContext(IEnumerable<Customer> customers)
+        private void AddCustomersToDbContext(IEnumerable<Customer> customers)
         {
             _context.AddRange(customers);
             _context.SaveChanges();
+        }
 
-
+        private void AddCustomer(Customer customer)
+        {
+            _context.Add(customer);
+            _context.SaveChanges();
         }
 
         private IEnumerable<Customer> CreateCustomer(int quantity)
         {
-            int id = 1;
+            int id= 1;
             GenFu.GenFu.Configure<Customer>()
-                    .Fill(c => c.Id, () => {return id++;});
-            return A.ListOf<Customer>(quantity);
+            .Fill(c=> c.Id, () => { return id++; });
 
+            return A.ListOf<Customer>(quantity);
         }
-       
+        public void CleanCustomerTable()
+        {   
+            _context.RemoveRange(_context.Customers);
+            _context.SaveChanges();            
+        }
     }
 }

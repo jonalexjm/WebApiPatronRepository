@@ -20,7 +20,7 @@ namespace Northwind.Api.Repository.Mysql
         public bool Update(T entity)
         {
            _context.Update(entity);
-            return _context.SaveChanges()>0;
+            return _context.SaveChanges() > 0;
         }
         public IEnumerable<T> ReadAll()
         {

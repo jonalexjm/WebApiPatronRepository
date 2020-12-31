@@ -25,7 +25,7 @@ namespace Northwind.Api.Integration.Test
                 
             services.AddDbContext<NorthwindDbContext>( opt => opt.UseInMemoryDatabase("MySqlDbInMemory"));
 
-            services.AddTransient<ICustomerRepository, CustomerRepository>();
+            services.AddSingleton<ICustomerRepository, CustomerRepository>();
             
         }
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, NorthwindDbContext context)
