@@ -1,13 +1,12 @@
-using Microsoft.AspNetCore.Mvc;
-using Northwind.Api.Repository;
+using System;
 using System.Collections.Generic;
-using Northwind.Api.Models;
 using System.Linq;
-using System.Net;
+using Microsoft.AspNetCore.Mvc;
+using Northwind.Api.Models;
+using Northwind.Api.Repository;
 
 namespace Northwind.Api.Controllers
-{
-    
+{    
     public class CustomerController : ApiController
     {
         private readonly ICustomerRepository _repository;
@@ -17,12 +16,12 @@ namespace Northwind.Api.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Customer>> GetAllCustomer()
+        public ActionResult<IEnumerable<Customer>> GetAllCustomers()
         {
             var result = _repository.ReadAll();
             if (!result.Any()) return NoContent();
-            return Ok(result);
-        }        
+            return Ok(result);            
+        }
 
         [HttpGet("{id:int}", Name = "GetCustomer")]
         public ActionResult<Customer> GetCustomer([FromRoute] int id)
@@ -44,7 +43,7 @@ namespace Northwind.Api.Controllers
             return CreatedAtAction("GetCustomer", new { id = customer.Id }, customer);
         }
 
-        [HttpPut]        
+        [HttpPut]
         public ActionResult<Customer> Put([FromBody] Customer customer)
         {
             if (customer == null) return BadRequest();
@@ -52,9 +51,23 @@ namespace Northwind.Api.Controllers
 
             if (!_repository.Exist(customer.Id)) return NoContent();
 
-            _repository.Update(customer);            
+            _repository.Update(customer);
 
             return Ok(customer);
+        }
+
+        [HttpDelete("{id:int}")]
+        public ActionResult<Customer> Delete([FromRoute] int id)
+        {
+            if (id <= 0) return BadRequest();
+
+            var customer = _repository.Read(id);
+
+            if (customer == null) return NoContent();
+
+            _repository.Delete(customer);
+
+            return Ok();
         }
     }
 }

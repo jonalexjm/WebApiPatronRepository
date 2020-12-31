@@ -1,22 +1,21 @@
-using System.Collections.Generic;
 using System;
-using Northwind.Api.Repository.Mysql;
-using Northwind.Api.Models;
+using System.Collections.Generic;
 using GenFu;
+using Northwind.Api.Models;
+using Northwind.Api.Repository.MySql;
 
-namespace Northwind.Api.Integration.Test
+namespace Northwind.Api.Integration.Tests.Builders
 {
     public class CustomerBuilder
     {
-        public readonly NorthwindDbContext _context;  
-
+        private readonly NorthwindDbContext _context;
         public CustomerBuilder(NorthwindDbContext context)
         {
-            _context = context;
-            CleanCustomerTable(); 
-        } 
+            _context = context;   
+            CleanCustomerTable();                                    
+        }
 
-         public CustomerBuilder WithSpecificCustomer(Customer customer)
+        public CustomerBuilder WithSpecificCustomer(Customer customer)
         {            
             AddCustomer(customer);
             return this;
@@ -59,9 +58,10 @@ namespace Northwind.Api.Integration.Test
 
             return A.ListOf<Customer>(quantity);
         }
+
         public void CleanCustomerTable()
         {   
-            _context.RemoveRange(_context.Customers);
+            _context.RemoveRange(_context.Customer);
             _context.SaveChanges();            
         }
     }

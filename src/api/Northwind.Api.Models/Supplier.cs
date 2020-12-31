@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
-#nullable disable
-
 namespace Northwind.Api.Models
 {
     public partial class Supplier
     {
         public Supplier()
         {
-            Products = new HashSet<Product>();
+            Product = new HashSet<Product>();
         }
 
         public int Id { get; set; }
@@ -21,6 +19,6 @@ namespace Northwind.Api.Models
         public string Phone { get; set; }
         public string Fax { get; set; }
 
-        public virtual ICollection<Product> Products { get; set; }
+        public virtual ICollection<Product> Product { get; set; }
     }
 }

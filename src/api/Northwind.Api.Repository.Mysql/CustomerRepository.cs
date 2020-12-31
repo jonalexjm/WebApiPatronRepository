@@ -1,23 +1,19 @@
-using System.Threading;
 using System;
-using Northwind.Api.Models;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using Northwind.Api.Models;
 
-namespace Northwind.Api.Repository.Mysql
+namespace Northwind.Api.Repository.MySql
 {
     public class CustomerRepository : Repository<Customer>, ICustomerRepository
     {
-        private readonly NorthwindDbContext _context;
-        public CustomerRepository(NorthwindDbContext context):base(context)
+        public CustomerRepository(NorthwindDbContext context) : base(context)
         {
-            _context = context;
         }
 
         public bool Exist(int id)
         {
-           return _context.Customers.FirstOrDefault(c => c.Id == id) != null;
-           
-           
+            return _context.Customer.AsNoTracking().FirstOrDefault(c => c.Id == id) != null;
         }
     }
 }

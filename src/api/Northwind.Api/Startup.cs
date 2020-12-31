@@ -11,9 +11,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
 using Northwind.Api.Repository;
-using Northwind.Api.Repository.Mysql;
+using Northwind.Api.Repository.MySql;
 
 namespace Northwind.Api
 {
@@ -29,15 +28,12 @@ namespace Northwind.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
-            services.AddDbContext<NorthwindDbContext>( opt => opt.UseMySql("server=localhost;database=northwind;uid=root", Microsoft.EntityFrameworkCore.ServerVersion.FromString("5.7.24-mysql")));
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Northwind.Api", Version = "v1" });
-            });
+            services.AddDbContext<NorthwindDbContext>(opt=> 
+                opt.UseMySql("server=localhost;database=northwind;uid=root", x => x.ServerVersion("5.7.24-mysql"))
+            );
 
-            services.AddTransient<ICustomerRepository, CustomerRepository>();
+            services.AddTransient<ICustomerRepository,CustomerRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,8 +42,6 @@ namespace Northwind.Api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Northwind.Api v1"));
             }
 
             app.UseHttpsRedirection();

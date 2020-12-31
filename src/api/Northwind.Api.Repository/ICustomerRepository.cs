@@ -1,4 +1,3 @@
-using System;
 using Northwind.Api.Models;
 
 namespace Northwind.Api.Repository

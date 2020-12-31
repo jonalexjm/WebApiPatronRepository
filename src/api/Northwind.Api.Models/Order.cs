@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
-#nullable disable
-
 namespace Northwind.Api.Models
 {
     public partial class Order
     {
         public Order()
         {
-            Orderitems = new HashSet<Orderitem>();
+            Orderitem = new HashSet<Orderitem>();
         }
 
         public int Id { get; set; }
@@ -19,6 +17,6 @@ namespace Northwind.Api.Models
         public decimal? TotalAmount { get; set; }
 
         public virtual Customer Customer { get; set; }
-        public virtual ICollection<Orderitem> Orderitems { get; set; }
+        public virtual ICollection<Orderitem> Orderitem { get; set; }
     }
 }

@@ -1,26 +1,28 @@
+using System;
+using System.Collections.Generic;
 using System.Net;
-using Xunit;
 using System.Threading.Tasks;
 using Alba;
-using System.Collections.Generic;
-using Northwind.Api.Models;
 using FluentAssertions;
-using Northwind.Api.Repository.Mysql;
 using GenFu;
+using Northwind.Api.Integration.Tests.Builders;
+using Northwind.Api.Models;
+using Northwind.Api.Repository.MySql;
+using Xunit;
 
-namespace Northwind.Api.Integration.Test
+namespace Northwind.Api.Integration.Tests
 {
     public class TestSuiteCustomerController : IClassFixture<WebApiFixture>
     {
         private readonly SystemUnderTest _system;
         private readonly NorthwindDbContext _context;
-
         public TestSuiteCustomerController(WebApiFixture app)
-        {   
+        {
             _system = app.systemUnderTest;
-            _context = app.northwindDbContext;
+            _context = app.northwindDbContext;            
         }
-#region Get Tests
+        
+        #region Get Tests
         [Fact]
         public async Task Verify_GetAllCustomers_200ResponseCode_With_Data()
         {
@@ -30,40 +32,35 @@ namespace Northwind.Api.Integration.Test
             var results = await _system.GetAsJson<IList<Customer>>("/api/customer");
             //Then
             results.Count.Should().Be(10);
-        
         }
-
-
-        //ejemplo de TDD 
 
         [Fact]
         public async Task Verify_GetAllCustomers_204ResponseCode()
         {
-        //Given
+            //Given            
             new CustomerBuilder(_context);
-        //When
-            await _system.Scenario(s => 
+            //When
+            await _system.Scenario(s =>
             {
                 s.Get.Url("/api/customer");
 
                 //Then
                 s.StatusCodeShouldBe(HttpStatusCode.NoContent);
-            });         
+            });
         }
 
         [Fact]
         public async Task Verify_GetCustomer_200ResponseCode()
         {
-        //Given
-            var customerId = int.MaxValue -1;
+            //Given            
+            int customerId = int.MaxValue-1;
             new CustomerBuilder(_context).WithOneCustomerAndIdValue(customerId);
-        //When
-            var customer = await _system.GetAsJson<Customer>($"/api/customer/{customerId}");         
-            //then
-            customer.Id.Should().Be(customerId);
+            //When
+            var results = await _system.GetAsJson<Customer>($"/api/customer/{customerId}");
+            //Then
+            results.Id.Should().Be(customerId);
         }
 
-        
         [Fact]
         public async Task Verify_GetCustomer_400ResponseCode()
         {
@@ -93,9 +90,9 @@ namespace Northwind.Api.Integration.Test
                 s.StatusCodeShouldBe(HttpStatusCode.NotFound);
             });
         }
-#endregion
+        #endregion
 
-#region Post Tests
+        #region Post Tests
         [Fact]
         public async Task Verify_PostCustomer_201ResponseCode()
         {
@@ -129,7 +126,7 @@ namespace Northwind.Api.Integration.Test
 
         #endregion
 
-#region Put Tests
+        #region Put Tests
         [Fact]
         public async Task Verify_PutCustomer_400ResponseCode()
         {
@@ -165,7 +162,6 @@ namespace Northwind.Api.Integration.Test
         {
             //Given         
             var customer = A.New<Customer>();
-
             customer.Id= int.MaxValue-2;
 
             new CustomerBuilder(_context).WithSpecificCustomer(customer);
@@ -175,8 +171,7 @@ namespace Northwind.Api.Integration.Test
             result.Should().BeEquivalentTo(customer);
         }
         #endregion
-
-#region Delete Tests
+        #region Delete Tests
         [Fact]
         public async Task Verify_DeleteCustomer_400ResponseCode()
         {
@@ -207,8 +202,8 @@ namespace Northwind.Api.Integration.Test
             });
         }
 
-        //[Fact]
-        /* public async Task Verify_DeleteCustomer_200ResponseCode()
+        [Fact]
+        public async Task Verify_DeleteCustomer_200ResponseCode()
         {
             //Given         
             var customer = A.New<Customer>();
@@ -223,9 +218,8 @@ namespace Northwind.Api.Integration.Test
                 s.StatusCodeShouldBe(HttpStatusCode.OK);
             });
         }
- */
+
         #endregion
-
     }
-}
 
+}
